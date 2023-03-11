@@ -5,6 +5,8 @@ import nz.ac.auckland.se281.Main.PolicyType;
 public class InsuranceSystem {
   public InsuranceSystem() {
     // Only this constructor can be used (if you need to initialise fields).
+   
+    // ArrayList<Users> listUsers = new ArrayList<Users>()
   }
 
   public void printDatabase() {
@@ -12,9 +14,10 @@ public class InsuranceSystem {
     // int numberProfiles = 0;
     // array list for database
 
-    System.out.println("Database has 0 profiles.");
+    // System.out.println("Database has 0 profiles.");
+    MessageCli.PRINT_DB_POLICY_COUNT.printMessage("0", "s", ".");
 
-    MessageCli.PRINT_DB_PROFILE_HEADER_MINIMAL.printMessage();
+    // MessageCli.PRINT_DB_PROFILE_HEADER_MINIMAL.printMessage();
 
     // MessageCli.PRINT_DB_POLICY_COUNT.printMessage("1", "", ":");
 
@@ -30,12 +33,22 @@ public class InsuranceSystem {
     // MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(userName);
     // Check what error to give if both name and age are wrong
 
+
+    //Convert name to title case
+
+    // String tempName = userName;
+    // String lowerName = tempName.toLowerCase();
+    // create-profile HJKABFnkonfJKOAEF 10 
+    userName = userName.substring(0, 1).toUpperCase() + userName.substring(1).toLowerCase();
     if (userName.length() >= 3) {
 
       int intAge = Integer.parseInt(age); // What the heck does this do though?
 
       if (intAge > 0) {
         MessageCli.PROFILE_CREATED.printMessage(userName, age);
+
+
+
       } else {
         MessageCli.INVALID_AGE.printMessage(age, userName);
       }
