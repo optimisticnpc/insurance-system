@@ -14,7 +14,7 @@ import org.junit.runners.Suite.SuiteClasses;
   MainTest.Task1.class,
   // MainTest.Task2.class, // Uncomment this line when to start Task 2
   // MainTest.Task3.class, // Uncomment this line when to start Task 3
-  // MainTest.YourTests.class, // Uncomment this line to run your own tests
+  MainTest.YourTests.class, // Uncomment this line to run your own tests
 })
 public class MainTest {
   public static class Task1 extends CliTest {
@@ -362,10 +362,17 @@ public class MainTest {
     }
 
     @Test
-    public void TY_01_your_own_test() throws Exception {
-      // Write your own test here, in the same format as the other tests.
-      runCommands(PRINT_DB);
-      assertContains("");
+    public void TY_01_test_unique() throws Exception {
+      // If the user tries to create a profile with a username that is already in the database
+      // then we must display the correct error message and
+      // Usernames must be unique. No profile was created for '<USERNAME>'.
+      runCommands(
+          CREATE_PROFILE, "Jordan", "21", PRINT_DB, CREATE_PROFILE, "Jordan", "20", PRINT_DB);
+      assertContains("Database has 1 profile:");
+      assertContains("1: Jordan, 21");
+      assertContains("Usernames must be unique. No profile was created for 'Jordan'.");
+      assertDoesNotContain("2: Jordan, 21", true);
+      assertDoesNotContain("Database has 2 profiles:", true);
     }
 
     @Test

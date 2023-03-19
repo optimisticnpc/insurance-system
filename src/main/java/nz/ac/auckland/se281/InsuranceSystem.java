@@ -5,9 +5,6 @@ import nz.ac.auckland.se281.Main.PolicyType;
 
 public class InsuranceSystem {
 
-  // ArrayList<String> databaseNames = new ArrayList<String>();
-  // ArrayList<String> databaseAge = new ArrayList<String>();
-
   private ArrayList<Profile> database = new ArrayList<Profile>();
 
   public InsuranceSystem() {
@@ -15,7 +12,6 @@ public class InsuranceSystem {
   }
 
   public void printDatabase() {
-
     int numberProfiles = database.size();
 
     // Case for 0 names in database
@@ -41,31 +37,25 @@ public class InsuranceSystem {
   }
 
   public void createNewProfile(String username, String age) {
-    // Check what error to give if both name and age are wrong
-
     // Convert username to title case
     username = username.substring(0, 1).toUpperCase() + username.substring(1).toLowerCase();
 
     // Check if profile already exists
-
-    // TODO: does contains work with an array list of classes?
-    if (database.contains(username)) {
-      MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(username);
-      return;
+    for (int i = 0; i < database.size(); i++) {
+      String currentUsername = database.get(i).getName();
+      if (currentUsername.contains(username)) {
+        MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(username);
+        return;
+      }
     }
 
     // Check if length of suername is at least 3 characters
     if (username.length() >= 3) {
-
-      int intAge = Integer.parseInt(age); // What the heck does this do though?
+      int intAge = Integer.parseInt(age);
 
       // Check if age is a positive integer. If it is, add the information to the database
       if (intAge > 0) {
         MessageCli.PROFILE_CREATED.printMessage(username, age);
-        // databaseNames.add(username);
-        // databaseAge.add(age);
-
-        // TODO: does the name have to be unique
         Profile newProfile = new Profile(username, intAge);
         database.add(newProfile);
       } else {
