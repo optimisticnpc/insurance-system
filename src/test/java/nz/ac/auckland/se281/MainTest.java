@@ -376,10 +376,31 @@ public class MainTest {
     }
 
     @Test
-    public void TY_02_your_own_test() throws Exception {
-      // Write your own test here, in the same format as the other tests.
-      runCommands(PRINT_DB);
-      assertContains("");
+    public void TY_02_test_substring_of_another_username() throws Exception {
+      // Test adding profiles where one username is a substring of another
+      // System should add both profiles
+      runCommands(CREATE_PROFILE, "Bobby", "21", PRINT_DB, CREATE_PROFILE, "Bob", "20", PRINT_DB);
+      assertContains("Database has 2 profiles:");
+      assertContains("1: Bobby, 21");
+      assertContains("2: Bob, 20");
+      assertDoesNotContain("Usernames must be unique. No profile was created for 'Bob'.");
+    }
+
+    @Test
+    public void TY_03_test_substring_of_another_username() throws Exception {
+      // Test adding profiles where one username is a substring of another
+      // System should add both profiles
+      runCommands(CREATE_PROFILE, "John", "21", PRINT_DB, CREATE_PROFILE, "Johnny", "20", PRINT_DB);
+      assertContains("Database has 2 profiles:");
+      assertContains("1: John, 21");
+      assertContains("2: Johnny, 20");
+      assertDoesNotContain("Usernames must be unique. No profile was created for 'Johnny'.");
+    }
+
+    @Test
+    public void TY_04_() throws Exception {
+      // Test for invalid age e.g some letters instead of integers
+
     }
   }
 
