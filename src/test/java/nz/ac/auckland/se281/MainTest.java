@@ -398,9 +398,12 @@ public class MainTest {
     }
 
     @Test
-    public void TY_04_() throws Exception {
+    public void TY_04_Test_Invalid_Age() throws Exception {
       // Test for invalid age e.g some letters instead of integers
-
+      runCommands(CREATE_PROFILE, "John", "twenty");
+      assertContains(
+          "twenty' is an invalid age, please provide a positive whole number only. No profile was"
+              + " created for John.");
     }
   }
 

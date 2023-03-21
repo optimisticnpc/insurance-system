@@ -38,35 +38,37 @@ public class InsuranceSystem {
   }
 
   public void createNewProfile(String username, String age) {
+    // Note: Method does not work if user has entered a $ symbol in any of the arguments
+
     // Convert username to title case
     username = username.substring(0, 1).toUpperCase() + username.substring(1).toLowerCase();
 
     // Check if profile already exists
     for (int i = 0; i < database.size(); i++) {
       String currentUsername = database.get(i).getName();
-
-      // TODO: FIX THIS
-      // System.out.println("current: " + currentUsername);
-      // System.out.println("name we want to add: " + username);
-
-      // if (currentUsername.contains(username)) {
       if (currentUsername.equals(username)) {
         MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(username);
         return;
       }
     }
 
-    // Check if length of suername is at least 3 characters
+    // Check if length of username is at least 3 characters
     if (username.length() >= 3) {
-      // TODO: FIX putting letters as age
+
+      // Check if the age input can be converted to an integer
+      try {
+        Integer.parseInt(age);
+      } catch (NumberFormatException e) {
+        MessageCli.INVALID_AGE.printMessage(age, username);
+        return;
+      }
 
       int intAge = Integer.parseInt(age);
 
-      // Check if age is a positive integer. If it is, add the information to the database
+      // Check if age is a positive integer. If it is, add the new profile to the database
       if (intAge > 0) {
         MessageCli.PROFILE_CREATED.printMessage(username, age);
-        Profile newProfile = new Profile(username, intAge);
-        database.add(newProfile);
+        database.add(new Profile(username, intAge));
       } else {
         MessageCli.INVALID_AGE.printMessage(age, username);
       }
