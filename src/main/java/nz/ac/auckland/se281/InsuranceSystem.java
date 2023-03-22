@@ -24,7 +24,7 @@ public class InsuranceSystem {
     if (numberProfiles == 1) {
       MessageCli.PRINT_DB_POLICY_COUNT.printMessage("1", "", ":");
     } else {
-      // Conver the number of profiles into a string for display
+      // Convert the number of profiles into a string for display
       String numberProfilesStr = String.valueOf(numberProfiles);
       MessageCli.PRINT_DB_POLICY_COUNT.printMessage(numberProfilesStr, "s", ":");
     }
