@@ -6,6 +6,7 @@ import nz.ac.auckland.se281.Main.PolicyType;
 public class InsuranceSystem {
 
   private ArrayList<Profile> database = new ArrayList<Profile>();
+  private int indexLoadedProfile = -1;
 
   public InsuranceSystem() {
     // Only this constructor can be used (if you need to initialise fields).
@@ -32,13 +33,24 @@ public class InsuranceSystem {
     // Print out list of profiles
     for (int i = 0; i < numberProfiles; i++) {
       Profile currentProfile = database.get(i);
-      MessageCli.PRINT_DB_PROFILE_HEADER_MINIMAL.printMessage(
-          String.valueOf(i + 1), currentProfile.getName(), currentProfile.getAgeStr());
+      // Check if profile is loaded profile
+      if (i == indexLoadedProfile) {
+        MessageCli.PRINT_DB_PROFILE_HEADER_SHORT.printMessage(
+            "*** ", String.valueOf(i + 1), currentProfile.getName(), currentProfile.getAgeStr());
+      } else {
+        MessageCli.PRINT_DB_PROFILE_HEADER_MINIMAL.printMessage(
+            String.valueOf(i + 1), currentProfile.getName(), currentProfile.getAgeStr());
+      }
     }
   }
 
   public void createNewProfile(String username, String age) {
-    // Note: Method does not work if user has entered a $ symbol in any of the arguments
+    // Check if a profile is loaded. If there is, do not create a new profile
+    if (indexLoadedProfile >= 0) {
+      MessageCli.CANNOT_CREATE_WHILE_LOADED.printMessage(
+          database.get(indexLoadedProfile).getName());
+      return;
+    }
 
     // Convert username to title case
     username = username.substring(0, 1).toUpperCase() + username.substring(1).toLowerCase();
@@ -78,15 +90,57 @@ public class InsuranceSystem {
   }
 
   public void loadProfile(String username) {
-    // TODO: Complete this method.
+    // Convert username to title case
+    username = username.substring(0, 1).toUpperCase() + username.substring(1).toLowerCase();
+
+    // Loop through arraylist to find if profile exists
+    for (int i = 0; i < database.size(); i++) {
+      String currentUsername = database.get(i).getName();
+      if (currentUsername.equals(username)) {
+        // Load the profile
+        indexLoadedProfile = i;
+        MessageCli.PROFILE_LOADED.printMessage(username);
+        return;
+      }
+    }
+
+    // Display message that no profile was found to load
+    MessageCli.NO_PROFILE_FOUND_TO_LOAD.printMessage(username);
   }
 
   public void unloadProfile() {
-    // TODO: Complete this method.
+    if (indexLoadedProfile >= 0) {
+      MessageCli.PROFILE_UNLOADED.printMessage(database.get(indexLoadedProfile).getName());
+      indexLoadedProfile = -1;
+      return;
+    }
+    MessageCli.NO_PROFILE_LOADED.printMessage();
   }
 
   public void deleteProfile(String username) {
-    // TODO: Complete this method.
+    // Convert username to title case
+    username = username.substring(0, 1).toUpperCase() + username.substring(1).toLowerCase();
+
+    for (int i = 0; i < database.size(); i++) {
+      String currentUsername = database.get(i).getName();
+      if (currentUsername.equals(username)) {
+
+        // Case 1: Check if specified profile is loaded profile, if so display error message
+        if (indexLoadedProfile == i) {
+          MessageCli.CANNOT_DELETE_PROFILE_WHILE_LOADED.printMessage(username);
+          return;
+        }
+
+        // Case 2: If profile found and it is not loaded, successfully delete the profile and
+        // display
+        // success message
+        database.remove(i);
+        MessageCli.PROFILE_DELETED.printMessage(username);
+        return;
+      }
+    }
+    // Case 3: We didn't find a profile to delete so display cannot find message
+    MessageCli.NO_PROFILE_FOUND_TO_DELETE.printMessage(username);
   }
 
   public void createPolicy(PolicyType type, String[] options) {
