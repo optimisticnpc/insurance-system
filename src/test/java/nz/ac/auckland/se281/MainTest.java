@@ -12,8 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
   MainTest.Task1.class,
-  // MainTest.Task2.class, // Uncomment this line when to start Task 2
-  // MainTest.Task3.class, // Uncomment this line when to start Task 3
+  MainTest.Task2.class, // Uncomment this line when to start Task 2
+  MainTest.Task3.class, // Uncomment this line when to start Task 3
   MainTest.YourTests.class, // Uncomment this line to run your own tests
 })
 public class MainTest {
@@ -404,6 +404,31 @@ public class MainTest {
       assertContains(
           "twenty' is an invalid age, please provide a positive whole number only. No profile was"
               + " created for John.");
+    }
+
+    @Test
+    public void TY3_01_add_home_policy_loaded_profile() throws Exception {
+      runCommands(
+          unpack(
+              CREATE_SOME_CLIENTS,
+              LOAD_PROFILE,
+              "Jenny",
+              POLICY_HOME,
+              options("1000000", "20 Symonds Street", "yes"),
+              PRINT_DB));
+
+      assertContains("Profile loaded for Jenny.");
+
+      assertContains("Database has 3 profiles:");
+      assertContains("1: Jordan, 21, 0 policies");
+      assertContains("2: Tom, 25, 0 policies");
+      assertContains("*** 3: Jenny, 23, 1 policy");
+
+      assertContains("New home policy created for Jenny.");
+
+      //   assertContains(
+      //       "Home Policy (20 Symonds Street, Sum Insured: $1000000, Premium: $20000 ->
+      // $20000)");
     }
   }
 

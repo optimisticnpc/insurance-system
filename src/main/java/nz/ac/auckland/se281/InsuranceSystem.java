@@ -33,13 +33,96 @@ public class InsuranceSystem {
     // Print out list of profiles
     for (int i = 0; i < numberProfiles; i++) {
       Profile currentProfile = database.get(i);
+      // Get number of policies for current profile
+      int numberPolicies = currentProfile.getNumberPolicies();
+
       // Check if profile is loaded profile
       if (i == indexLoadedProfile) {
-        MessageCli.PRINT_DB_PROFILE_HEADER_SHORT.printMessage(
-            "*** ", String.valueOf(i + 1), currentProfile.getName(), currentProfile.getAgeStr());
+
+        // TODO: Change dollar amount
+
+        // Cases for more than 1 policy, exactly 1 policy, and 0 policies
+        if (numberPolicies > 1) {
+          MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
+              "*** ",
+              String.valueOf(i + 1),
+              currentProfile.getName(),
+              currentProfile.getAgeStr(),
+              String.valueOf(numberPolicies),
+              "ies",
+              "0");
+        } else if (numberPolicies == 1) {
+          MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
+              "*** ",
+              String.valueOf(i + 1),
+              currentProfile.getName(),
+              currentProfile.getAgeStr(),
+              "1",
+              "y",
+              "0");
+        } else {
+          MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
+              "*** ",
+              String.valueOf(i + 1),
+              currentProfile.getName(),
+              currentProfile.getAgeStr(),
+              "0",
+              "ies",
+              "0");
+        }
+
+        // Display policies of loaded profile
+        if (numberPolicies > 0) {
+          for (int j = 0; j < numberPolicies; j++) {
+            // TODO: FIX THIS
+            Object currentPolicy = currentProfile.getPolicy(j);
+
+            if (currentPolicy instanceof HomePolicy) {
+              HomePolicy currentHomePolicy = (HomePolicy) currentPolicy;
+              currentHomePolicy.printPolicy();
+
+            } else if (currentPolicy instanceof CarPolicy) {
+              CarPolicy currentHomePolicy = (CarPolicy) currentPolicy;
+              currentHomePolicy.printPolicy(currentProfile.getAge());
+
+            } else if (currentPolicy instanceof LifePolicy) {
+              LifePolicy currentHomePolicy = (LifePolicy) currentPolicy;
+              currentHomePolicy.printPolicy();
+            }
+          }
+        }
+
       } else {
-        MessageCli.PRINT_DB_PROFILE_HEADER_MINIMAL.printMessage(
-            String.valueOf(i + 1), currentProfile.getName(), currentProfile.getAgeStr());
+        // Cases for profiles that are not loaded:
+        // More than 1 policy, exactly one policy and zero policies
+        if (numberPolicies == 0) {
+          MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
+              " ",
+              String.valueOf(i + 1),
+              currentProfile.getName(),
+              currentProfile.getAgeStr(),
+              String.valueOf(numberPolicies),
+              "ies",
+              "0");
+        } else if (numberPolicies == 1) {
+          MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
+              " ",
+              String.valueOf(i + 1),
+              currentProfile.getName(),
+              currentProfile.getAgeStr(),
+              "1",
+              "y",
+              "0");
+        } else {
+          MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
+              " ",
+              String.valueOf(i + 1),
+              currentProfile.getName(),
+              currentProfile.getAgeStr(),
+              "0",
+              "ies",
+              "0");
+        }
       }
     }
   }
@@ -144,6 +227,55 @@ public class InsuranceSystem {
   }
 
   public void createPolicy(PolicyType type, String[] options) {
-    // TODO: Complete this method.
+    // Check if there is a loaded profile, if there isn't display error message
+    if (indexLoadedProfile < 0) {
+      MessageCli.NO_PROFILE_FOUND_TO_CREATE_POLICY.printMessage();
+      return;
+    }
+
+    // Convert sum insured into integer
+    int sumInsured = Integer.parseInt(options[0]);
+
+    Profile loadedProfile = database.get(indexLoadedProfile);
+
+    if (type == PolicyType.HOME) {
+      // Find if variable rental should be true or false
+      // TODO: DO WE NEED TO ACCOUNT FOR CAPITALISED YES
+      boolean rental = false;
+      if (options[2].contains("y")) {
+        rental = true;
+      }
+      loadedProfile.addPolicy(new HomePolicy(sumInsured, options[1], rental));
+
+    } else if (type == PolicyType.CAR) {
+
+      // Find if variable mechanicalBreakdown should be true or false
+      // TODO: DO WE NEED TO ACCOUNT FOR CAPITALISED YES
+      boolean mechanicalBreakdown = false;
+      if (options[3].contains("y")) {
+        mechanicalBreakdown = true;
+      }
+
+      loadedProfile.addPolicy(
+          new CarPolicy(sumInsured, options[1], options[3], mechanicalBreakdown));
+    }
+    // else {
+    //   loadedProfile.addPolicy(new LifePolicy(sumInsured））;
+    // }
+
+    // Display new policy created message
+    String typeString = null;
+
+    if (type == PolicyType.HOME) {
+      typeString = "home";
+    } else if (type == PolicyType.CAR) {
+      typeString = "car";
+    } else {
+      typeString = "life";
+    }
+
+    String loadedProfileName = database.get(indexLoadedProfile).getName();
+
+    MessageCli.NEW_POLICY_CREATED.printMessage(typeString, loadedProfileName);
   }
 }
