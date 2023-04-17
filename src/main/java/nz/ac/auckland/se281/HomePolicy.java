@@ -8,24 +8,30 @@ public class HomePolicy extends Policy {
     super(sumInsured);
     this.address = address;
     this.rental = rental;
-  }
-
-  // @Override
-  public void printPolicy() {
 
     // TODO: Should this be double??
-    int intPremium = 0;
-
     // Check if it is a rental or not and adjust premium accordingly
     if (rental == false) {
-      intPremium = (int) (0.01 * sumInsured);
+      premiumBeforeDiscount = (int) (0.01 * sumInsured);
     } else {
-      intPremium = (int) (0.02 * sumInsured);
+      premiumBeforeDiscount = (int) (0.02 * sumInsured);
     }
+  }
 
-    String premium = Integer.toString(intPremium);
+  @Override
+  public void printPolicy(int age, int numberPolicies) {
+
+    // Find discounted premium
+    premiumAfterDiscount = findDiscount(premiumBeforeDiscount, numberPolicies);
+
+    String premiumAfterDiscountString = Integer.toString(premiumAfterDiscount);
+
+    String premiumBeforeDiscountString = Integer.toString(premiumBeforeDiscount);
 
     MessageCli.PRINT_DB_HOME_POLICY.printMessage(
-        address, Integer.toString(sumInsured), premium, premium);
+        address,
+        Integer.toString(sumInsured),
+        premiumBeforeDiscountString,
+        premiumAfterDiscountString);
   }
 }

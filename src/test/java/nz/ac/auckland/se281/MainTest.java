@@ -430,6 +430,34 @@ public class MainTest {
       //       "Home Policy (20 Symonds Street, Sum Insured: $1000000, Premium: $20000 ->
       // $20000)");
     }
+
+    @Test
+    public void TY3_02_two_policies_one_profile_ignore_zero_policy_total_costs() throws Exception {
+      runCommands(
+          unpack( //
+              CREATE_SOME_CLIENTS, //
+              LOAD_PROFILE,
+              "Tom", //
+              POLICY_HOME,
+              options("1000000", "20 Symonds Street", "yes"), //
+              POLICY_CAR,
+              options("55000", "Subaru Impreza", "SUB123", "no"), //
+              UNLOAD_PROFILE, //
+              LOAD_PROFILE,
+              "Jenny", //
+              POLICY_CAR,
+              options("55000", "Subaru Impreza", "SUB123", "no"), //
+              UNLOAD_PROFILE, //
+              PRINT_DB));
+
+      // assertContains("2: Tom, 25, 2 policies for a total of $22950");
+      assertContains("3: Jenny, 23, 1 policy for a total of $8250");
+
+      assertContains(
+          "Home Policy (20 Symonds Street, Sum Insured: $1000000, Premium: $20000 -> $18000)");
+      assertContains("Car Policy (Subaru Impreza, Sum Insured: $55000, Premium: $5500 -> $4950)");
+      assertContains("Car Policy (Subaru Impreza, Sum Insured: $55000, Premium: $8250 -> $8250)");
+    }
   }
 
   private static final Object[] CREATE_SOME_CLIENTS =
