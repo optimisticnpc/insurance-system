@@ -25,7 +25,7 @@ public class CarPolicy extends Policy {
     }
 
     // If car is to be covered for mechanical breakdown, add $80
-    if (mechanicalBreakdown == true) {
+    if (this.mechanicalBreakdown == true) {
       premiumBeforeDiscount = premiumBeforeDiscount + 80;
     }
   }

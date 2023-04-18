@@ -9,9 +9,8 @@ public class HomePolicy extends Policy {
     this.address = address;
     this.rental = rental;
 
-    // TODO: Should this be double??
     // Check if it is a rental or not and adjust premium accordingly
-    if (rental == false) {
+    if (this.rental == false) {
       premiumBeforeDiscount = (int) (0.01 * sumInsured);
     } else {
       premiumBeforeDiscount = (int) (0.02 * sumInsured);

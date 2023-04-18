@@ -3,10 +3,10 @@ package nz.ac.auckland.se281;
 import java.util.ArrayList;
 
 public class Profile {
-  private String name;
   private int age;
-  private ArrayList<Object> profilesPolicies = new ArrayList<Object>();
+  private String name;
   private boolean hasLifePolicy;
+  private ArrayList<Object> profilesPolicies = new ArrayList<Object>();
 
   public Profile(String name, int age) {
     this.name = name;
@@ -51,8 +51,9 @@ public class Profile {
 
   public int getTotalPolicyValue() {
     int totalValue = 0;
-    // If no policies, return
     int numPolicies = this.getNumberPolicies();
+
+    // If no policies, return
     if (numPolicies == 0) {
       return 0;
     }

@@ -26,25 +26,28 @@ public class InsuranceSystem {
       MessageCli.PRINT_DB_POLICY_COUNT.printMessage("1", "", ":");
     } else {
       // Convert the number of profiles into a string for display
-      String numberProfilesStr = String.valueOf(numberProfiles);
-      MessageCli.PRINT_DB_POLICY_COUNT.printMessage(numberProfilesStr, "s", ":");
+      String numberProfilesString = String.valueOf(numberProfiles);
+      MessageCli.PRINT_DB_POLICY_COUNT.printMessage(numberProfilesString, "s", ":");
     }
 
     // Print out list of profiles
-    int totalPolicyValue;
-    String totalPolicyValueString;
 
     for (int i = 0; i < numberProfiles; i++) {
       Profile currentProfile = database.get(i);
+
       // Get number of policies for current profile
       int numberPolicies = currentProfile.getNumberPolicies();
-      totalPolicyValue = currentProfile.getTotalPolicyValue();
-      totalPolicyValueString = Integer.toString(totalPolicyValue);
+
+      // Get the total value of the policies
+      int totalPolicyValue = currentProfile.getTotalPolicyValue();
+      String totalPolicyValueString = Integer.toString(totalPolicyValue);
 
       // Check if profile is loaded profile
       if (i == indexLoadedProfile) {
-        // Cases for more than 1 policy, exactly 1 policy, and 0 policies
+
+        // Cases for if the profile is currently loaded
         if (numberPolicies > 1) {
+          // Case for more than 1 policy
           MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
               "*** ",
               String.valueOf(i + 1),
@@ -53,7 +56,9 @@ public class InsuranceSystem {
               String.valueOf(numberPolicies),
               "ies",
               totalPolicyValueString);
+
         } else if (numberPolicies == 1) {
+          // Case for exactly 1 policy
           MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
               "*** ",
               String.valueOf(i + 1),
@@ -62,7 +67,9 @@ public class InsuranceSystem {
               "1",
               "y",
               totalPolicyValueString);
+
         } else {
+          // Case for 0 policies
           MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
               "*** ",
               String.valueOf(i + 1),
@@ -75,9 +82,9 @@ public class InsuranceSystem {
 
       } else {
         // Cases for profiles that are not loaded:
-        // More than 1 policy, exactly one policy and zero policies
 
         if (numberPolicies > 1) {
+          // Case for more than 1 policy
           MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
               " ",
               String.valueOf(i + 1),
@@ -86,7 +93,9 @@ public class InsuranceSystem {
               String.valueOf(numberPolicies),
               "ies",
               totalPolicyValueString);
+
         } else if (numberPolicies == 1) {
+          // Case for exactly 1 policy
           MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
               " ",
               String.valueOf(i + 1),
@@ -95,7 +104,9 @@ public class InsuranceSystem {
               "1",
               "y",
               totalPolicyValueString);
+
         } else {
+          // Case for 0 policies
           MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
               " ",
               String.valueOf(i + 1),
@@ -107,7 +118,7 @@ public class InsuranceSystem {
         }
       }
 
-      // Display policies
+      // Display policy details
       if (numberPolicies > 0) {
         for (int j = 0; j < numberPolicies; j++) {
           // TODO: FIX THIS
@@ -132,7 +143,7 @@ public class InsuranceSystem {
   }
 
   public void createNewProfile(String username, String age) {
-    // Check if a profile is loaded. If there is, do not create a new profile
+    // Check if there is a profile is loaded. If there is, do not create a new profile
     if (indexLoadedProfile >= 0) {
       MessageCli.CANNOT_CREATE_WHILE_LOADED.printMessage(
           database.get(indexLoadedProfile).getName());
@@ -166,8 +177,8 @@ public class InsuranceSystem {
 
       // Check if age is a positive integer. If it is, add the new profile to the database
       if (intAge > 0) {
-        MessageCli.PROFILE_CREATED.printMessage(username, age);
         database.add(new Profile(username, intAge));
+        MessageCli.PROFILE_CREATED.printMessage(username, age);
       } else {
         MessageCli.INVALID_AGE.printMessage(age, username);
       }
@@ -191,7 +202,7 @@ public class InsuranceSystem {
       }
     }
 
-    // Display message that no profile was found to load
+    // Otherwise display message that no profile was found to load
     MessageCli.NO_PROFILE_FOUND_TO_LOAD.printMessage(username);
   }
 
@@ -219,14 +230,13 @@ public class InsuranceSystem {
         }
 
         // Case 2: If profile found and it is not loaded, successfully delete the profile and
-        // display
-        // success message
+        // display success message
         database.remove(i);
         MessageCli.PROFILE_DELETED.printMessage(username);
         return;
       }
     }
-    // Case 3: We didn't find a profile to delete so display cannot find message
+    // Case 3: We didn't find a profile to delete. Display cannot find message
     MessageCli.NO_PROFILE_FOUND_TO_DELETE.printMessage(username);
   }
 
@@ -237,25 +247,25 @@ public class InsuranceSystem {
       return;
     }
 
-    // Convert sum insured into integer
+    // Convert the sum insured into an integer
     int sumInsured = Integer.parseInt(options[0]);
 
     Profile loadedProfile = database.get(indexLoadedProfile);
     String loadedProfileName = loadedProfile.getName();
 
+    // Case for Home Policy
     if (type == PolicyType.HOME) {
       // Find if variable rental should be true or false
-      // TODO: DO WE NEED TO ACCOUNT FOR CAPITALISED YES
       boolean rental = false;
       if (options[2].contains("y")) {
         rental = true;
       }
       loadedProfile.addPolicy(new HomePolicy(sumInsured, options[1], rental));
 
+      // Case for Car Policy
     } else if (type == PolicyType.CAR) {
 
       // Find if variable mechanicalBreakdown should be true or false
-      // TODO: DO WE NEED TO ACCOUNT FOR CAPITALISED YES
       boolean mechanicalBreakdown = false;
       if (options[3].contains("y")) {
         mechanicalBreakdown = true;
@@ -264,6 +274,8 @@ public class InsuranceSystem {
       loadedProfile.addPolicy(
           new CarPolicy(
               sumInsured, options[1], options[3], mechanicalBreakdown, loadedProfile.getAge()));
+
+      // Case for Life Policy
     } else {
       // Check if age is over limit
       if (loadedProfile.getAge() > 100) {
@@ -277,6 +289,8 @@ public class InsuranceSystem {
       }
       // Otherwise add the life policy
       loadedProfile.addPolicy(new LifePolicy(sumInsured, loadedProfile.getAge()));
+      // Update life policy status
+      loadedProfile.updateLifePolicyStatus(true);
     }
 
     // Display new policy created message

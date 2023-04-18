@@ -76,6 +76,108 @@ public class MainTest {
       assertDoesNotContain("jorDan");
       assertDoesNotContain("TOM");
     }
+
+    @Test
+    public void T1_xx_add_five_clients() throws Exception {
+      runCommands( //
+          CREATE_PROFILE,
+          "Jordan",
+          "21", //
+          CREATE_PROFILE,
+          "Jenny",
+          "22", //
+          CREATE_PROFILE,
+          "TOM",
+          "23", //
+          CREATE_PROFILE,
+          "tOmmY",
+          "24", //
+          CREATE_PROFILE,
+          "aLeX",
+          "25", //
+          PRINT_DB);
+
+      assertContains("Database has 5 profiles:");
+      assertContains("1: Jordan, 21");
+      assertContains("2: Jenny, 22");
+      assertContains("3: Tom, 23");
+      assertContains("4: Tommy, 24");
+      assertContains("5: Alex, 25");
+    }
+
+    @Test
+    public void T1_xx_username_to_titlecase() throws Exception {
+      runCommands(CREATE_PROFILE, "jorDan", "21", CREATE_PROFILE, "TOM", "25", PRINT_DB);
+      assertContains("Database has 2 profiles:");
+      assertContains("1: Jordan, 21");
+      assertContains("2: Tom, 25");
+      assertDoesNotContain("jorDan");
+      assertDoesNotContain("TOM");
+    }
+
+    @Test
+    public void T1_xx_add_ignore_duplicate() throws Exception {
+      runCommands(CREATE_PROFILE, "Jordan", "21", CREATE_PROFILE, "Jordan", "35", PRINT_DB);
+      assertContains("Database has 1 profile:");
+      assertContains("1: Jordan, 21");
+
+      assertContains("Usernames must be unique. No profile was created for 'Jordan'.");
+
+      assertDoesNotContain("Database has 0 profiles", true);
+      assertDoesNotContain("Database has 2 profiles", true);
+      assertDoesNotContain("Jordan, 35", true);
+    }
+
+    @Test
+    public void T1_xx_add_ignore_duplicate_added_later() throws Exception {
+      runCommands(
+          CREATE_PROFILE,
+          "tom",
+          "21", //
+          CREATE_PROFILE,
+          "jordan",
+          "25", //
+          CREATE_PROFILE,
+          "Jenny",
+          "23", //
+          CREATE_PROFILE,
+          "TOM",
+          "32", //
+          PRINT_DB);
+      assertContains("Database has 3 profiles:");
+      assertContains("1: Tom, 21");
+      assertContains("2: Jordan, 25");
+      assertContains("3: Jenny, 23");
+
+      assertContains("Usernames must be unique. No profile was created for 'Tom'.");
+
+      assertDoesNotContain("Database has 4 profiles", true);
+      assertDoesNotContain("Tom, 32", true);
+    }
+
+    @Test
+    public void T1_xx_ignore_invalid_age_negative() throws Exception {
+      runCommands(CREATE_PROFILE, "Jordan", "-1", PRINT_DB);
+      assertContains("Database has 0 profiles.");
+      assertContains(
+          "'-1' is an invalid age, please provide a positive whole number only. No profile was"
+              + " created for Jordan.");
+      assertDoesNotContain("Database has 1 profile", true);
+      assertDoesNotContain("Jordan, -1", true);
+      assertDoesNotContain("New profile created", true);
+    }
+
+    @Test
+    public void T1_xx_add_success_after_invalid_age() throws Exception {
+      runCommands(CREATE_PROFILE, "Jordan", "-1", CREATE_PROFILE, "Jordan", "20", PRINT_DB);
+      assertContains(
+          "'-1' is an invalid age, please provide a positive whole number only. No profile was"
+              + " created for Jordan.");
+      assertContains("Database has 1 profile:");
+      assertContains("1: Jordan, 20");
+      assertDoesNotContain("Database has 0 profiles", true);
+      assertDoesNotContain("Jordan, -1", true);
+    }
   }
 
   public static class Task2 extends CliTest {
@@ -407,6 +509,23 @@ public class MainTest {
     }
 
     @Test
+    public void TY2_01_delete_another_profile_while_loaded() throws Exception {
+      runCommands(
+          unpack(CREATE_SOME_CLIENTS, LOAD_PROFILE, "Jenny", DELETE_PROFILE, "tOm", PRINT_DB));
+
+      assertContains("Profile loaded for Jenny.");
+
+      assertContains("Profile deleted for Tom");
+      assertDoesNotContain(
+          "Cannot delete profile for Tom while loaded. No profile was deleted.", false);
+
+      assertContains("Database has 2 profiles:");
+      assertContains("1: Jordan, 21");
+      assertDoesNotContain("2: Tom, 25", true);
+      assertContains("2: Jenny, 23");
+    }
+
+    @Test
     public void TY3_01_add_home_policy_loaded_profile() throws Exception {
       runCommands(
           unpack(
@@ -432,31 +551,31 @@ public class MainTest {
     }
 
     @Test
-    public void TY3_02_two_policies_one_profile_ignore_zero_policy_total_costs() throws Exception {
+    public void TY3_02_try_to_add_two_life_policies() throws Exception {
       runCommands(
-          unpack( //
-              CREATE_SOME_CLIENTS, //
-              LOAD_PROFILE,
-              "Tom", //
-              POLICY_HOME,
-              options("1000000", "20 Symonds Street", "yes"), //
-              POLICY_CAR,
-              options("55000", "Subaru Impreza", "SUB123", "no"), //
-              UNLOAD_PROFILE, //
-              LOAD_PROFILE,
-              "Jenny", //
-              POLICY_CAR,
-              options("55000", "Subaru Impreza", "SUB123", "no"), //
-              UNLOAD_PROFILE, //
-              PRINT_DB));
+          CREATE_PROFILE,
+          "Jenny",
+          100,
+          LOAD_PROFILE,
+          "Jenny",
+          POLICY_LIFE,
+          options("100000"),
+          POLICY_LIFE,
+          options("200000"),
+          UNLOAD_PROFILE,
+          PRINT_DB);
 
-      // assertContains("2: Tom, 25, 2 policies for a total of $22950");
-      assertContains("3: Jenny, 23, 1 policy for a total of $8250");
+      assertContains("Profile loaded for Jenny.");
+      assertDoesNotContain("Jenny is over the age limit. No policy was created.");
 
-      assertContains(
-          "Home Policy (20 Symonds Street, Sum Insured: $1000000, Premium: $20000 -> $18000)");
-      assertContains("Car Policy (Subaru Impreza, Sum Insured: $55000, Premium: $5500 -> $4950)");
-      assertContains("Car Policy (Subaru Impreza, Sum Insured: $55000, Premium: $8250 -> $8250)");
+      assertContains("Database has 1 profile:");
+      assertContains("1: Jenny, 100, 1 policy");
+      assertContains("New life policy created for Jenny.");
+      assertContains("Life Policy (Sum Insured: $100000");
+
+      assertContains("Jenny already has a life policy. No new policy was created.");
+
+      assertDoesNotContain("Life Policy (Sum Insured: $200000");
     }
   }
 

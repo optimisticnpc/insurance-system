@@ -2,8 +2,8 @@ package nz.ac.auckland.se281;
 
 public abstract class Policy {
   protected int sumInsured;
-  int premiumBeforeDiscount;
-  int premiumAfterDiscount;
+  protected int premiumBeforeDiscount;
+  protected int premiumAfterDiscount;
 
   public Policy(int sumInsured) {
     this.sumInsured = sumInsured;
