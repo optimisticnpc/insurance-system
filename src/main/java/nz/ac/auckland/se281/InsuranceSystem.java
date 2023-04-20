@@ -233,6 +233,11 @@ public class InsuranceSystem {
         // display success message
         database.remove(i);
         MessageCli.PROFILE_DELETED.printMessage(username);
+        // If the profile was deleted profile was before the loaded profile
+        // Adjust the index
+        if (i < indexLoadedProfile) {
+          indexLoadedProfile--;
+        }
         return;
       }
     }

@@ -46,4 +46,8 @@ public class CarPolicy extends Policy {
         premiumBeforeDiscountString,
         premiumAfterDiscountString);
   }
+
+  public String getLicensePlate() {
+    return licensePlate;
+  }
 }
