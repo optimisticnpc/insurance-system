@@ -261,6 +261,8 @@ public class InsuranceSystem {
     // Case for Home Policy
     if (type == PolicyType.HOME) {
       // Find if variable rental should be true or false
+      // Will count as 'true' if the string contains a the letter 'y' irrespective of
+      // lower/uppercase
       boolean rental = false;
       if (options[2].contains("y") || options[2].contains("Y")) {
         rental = true;
@@ -271,8 +273,6 @@ public class InsuranceSystem {
     } else if (type == PolicyType.CAR) {
 
       // Find if variable mechanicalBreakdown should be true or false
-      // Will count as 'true' if the string contains a the letter 'y' irrespective of
-      // lower/uppercase
       boolean mechanicalBreakdown = false;
       if (options[3].contains("y") || options[3].contains("Y")) {
         mechanicalBreakdown = true;
