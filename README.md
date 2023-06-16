@@ -1,5 +1,2 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/miIEXoNC)
-# Assignment 1
-
-You will find instructions for this assignment on the course website.
-
+This repository contains my Assignment 1 for the course SOFTENG 281: Object-Oriented Programming in Semester 1 2022.
+All code in src/main/java/nz/ac/auckland/se281 with the exception of Main.java and MessageCli.java were created by me.
