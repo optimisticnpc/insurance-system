@@ -11,3 +11,5 @@ This project is a simple insurance system with a terminal-driven interface which
 - Calculate the cost of premiums for any given policy,
 - Calculate the total cost of premiums for all policies for a client,
 - Applying discounts for clients who have multiple policies.
+
+This project earned 100% overall (which includes marks for functionality, OO design and code style)
